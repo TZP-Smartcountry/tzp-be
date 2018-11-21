@@ -19,6 +19,11 @@ data class Signature(val status: Status,
                      val assignee: String?,
                      val details: String)
 
+data class Location(val type: String,
+                    val coordinates: Array<Double>,
+                    val radius: Double,
+                    val properties: JsonNode)
+
 data class Zone(val id: String?,
                 val location: JsonNode,
                 val address: Address,
@@ -32,4 +37,4 @@ data class Zone(val id: String?,
 
 data class Subscription(val id: String?,
                         val author: String?,
-                        val location: JsonNode)
+                        val location: Location)

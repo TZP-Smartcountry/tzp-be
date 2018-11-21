@@ -1,6 +1,7 @@
 package com.tzp
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.application.*
@@ -40,7 +41,7 @@ class Main {
 
         fun addZone(zone: Zone, author: String): String {
             val id = UUID.randomUUID().toString()
-            zones.add(zone.copy(id = id, author = author))
+            zones.add(zone.copy(id = id, author = author, signature = null))
             return id
         }
 
@@ -61,7 +62,7 @@ class Main {
         fun triggerSubscribers(zone: Zone) {
             subscriptions.forEach {
                 println(zone.location)
-                println(it.location)
+                println(ObjectMapper().writeValueAsString(it.location))
                 println(zone.location.toShape())
                 println(it.location.toShape())
                 if (zone.location.toShape().relate(it.location.toShape()) != SpatialRelation.DISJOINT) {
@@ -141,7 +142,7 @@ class Main {
                 }
             }.start(wait = true)
         }
-
+        fun Location.toShape(): Shape = JtsSpatialContext.GEO.formats.geoJsonReader.read(ObjectMapper().writeValueAsString(this).reader())
         fun JsonNode.toShape(): Shape = JtsSpatialContext.GEO.formats.geoJsonReader.read(this.toString().reader())
     }
 }
